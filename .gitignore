@@ -1,1 +1,4 @@
 .idea/
+data.xlsx
+transformed_data.xlsx
+__pycache__/
