@@ -42,14 +42,15 @@ def format_paragraph(paragraph,isBold):
 def insert_failures(automat_id, col_index, failures_dict, table, solution_dict):
     if 'EN' in automat_id:
         word_automat_id = automat_id[0:4]
-    else: word_automat_id = automat_id
+    else:
+        id_localization_list = automat_id.split()
+        word_automat_id = str(id_localization_list[0].strip())
     row_index = find_row_index(word_automat_id, table)
 
     if row_index is None:
         raise ValueError(f"Zwrócono pusty indeks {row_index}")
-
     cell = table.cell(row_index, col_index)
-    values = [f"{count}x {solution_dict[failure.lower()]}" for failure,count in failures_dict[automat_id].items()]
+    values = [f"{count}x {solution_dict[failure]}" for failure,count in failures_dict[automat_id].items()]
 
     if cell.text:  # jeżeli w komórce już coś jest
         cell.text += ", " + ", ".join(values)
@@ -65,7 +66,3 @@ def replace_text(doc, replacement_dict):
         if '{month}' in text or '{year}' in text:
             paragraph.text = text.replace('{month}', replacement_dict['{month}']).replace('{year}', replacement_dict['{year}'])
         format_paragraph(paragraph, True)
-
-
-
-

@@ -3,6 +3,7 @@ import excel as x
 
 month = input("Podaj miesiąc, którego ma dotyczyć raport: ")
 year = input("Podaj rok, którego ma dotyczyć raport: ")
+excel_name = input("Podaj nazwę pliku xlsx, z którego należy wygenerować raporty: ")
 
 replacement_dict = {
     '{month}': month,
@@ -32,6 +33,7 @@ word_stationary = w.open_docx("Raport odnośnie urządzeń umieszczonych w teren
 word_mobile = w.open_docx("Raport odnośnie urządzeń mobilnych umieszczonych w pociągach.docx") #otwarcie pliku word mobilne automaty
 
 w.replace_text(word_mobile, replacement_dict)
+w.replace_text(word_stationary, replacement_dict)
 
 table_stationary = word_stationary.tables[0] #przypisanie tabeli do zmiennej (stacjonarne)
 stationary_fail_col = w.find_col_index("Usuwanie nieprawidłowości w funkcjonowaniu urządzeń",table_stationary) #wyszukanie kolumny w której będziemy zmieniać wartości
@@ -39,19 +41,17 @@ stationary_fail_col = w.find_col_index("Usuwanie nieprawidłowości w funkcjonow
 table_mobile = word_mobile.tables[0] #przypisanie tabeli do zmiennej (mobilne)
 mobile_fail_col = w.find_col_index("Usuwanie nieprawidłowości w funkcjonowaniu urządzeń",table_mobile)
 
-excel = x.open_excel("transformed_data.xlsx")
+excel = x.open_excel(excel_name)
 failures_dictionary = x.count_failures(excel) #utworzenie słownika z kluczem automat_id i wartościami failures, count
-
 
 for automat_id, failures in failures_dictionary.items():
     if 'EN' in automat_id:
         w.insert_failures(automat_id,mobile_fail_col, failures_dictionary,table_mobile, failure_solution_dict)
-    #else:
-     #   w.insert_failures(automat_id,stationary_fail_col, failures_dictionary,table_stationary, failure_solution_dict)
+    else:
+        w.insert_failures(automat_id,stationary_fail_col, failures_dictionary,table_stationary, failure_solution_dict)
 
 w.save_docx(f"Raport odnośnie urządzeń mobilnych umieszczonych w pociągach za {month} {year}.docx", word_mobile)
-#w.save_docx(f"Raport odnośnie urządzeń umieszczonych w terenie za {month} {year}.docx", word_stationary)
-
+w.save_docx(f"Raport odnośnie urządzeń umieszczonych w terenie za {month} {year}.docx", word_stationary)
 
 
 
