@@ -63,6 +63,6 @@ def insert_failures(automat_id, col_index, failures_dict, table, solution_dict):
 def replace_text(doc, replacement_dict):
     for paragraph in doc.paragraphs:
         text = paragraph.text
-        if '{month}' in text or '{year}' in text:
-            paragraph.text = text.replace('{month}', replacement_dict['{month}']).replace('{year}', replacement_dict['{year}'])
+        if '{time_period}' in text or '{year}' in text:
+            paragraph.text = text.replace('{time_period}', replacement_dict['{time_period}']).replace('{year}', replacement_dict['{year}'])
         format_paragraph(paragraph, True)

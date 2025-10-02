@@ -21,3 +21,15 @@ def count_failures(excel):
                 fail_count_dict[automat_id][failure] = 0
             fail_count_dict[automat_id][failure] += 1
     return fail_count_dict
+
+def merge_failure_dicts(dict_list):
+    merged_dict = {}
+    for fail_dict in dict_list:
+        for automat_id, failures in fail_dict.items():
+            if automat_id not in merged_dict:
+                merged_dict[automat_id] = {}
+            for failure, count in failures.items():
+                if failure not in merged_dict[automat_id]:
+                    merged_dict[automat_id][failure] = 0
+                merged_dict[automat_id][failure] += count
+    return merged_dict

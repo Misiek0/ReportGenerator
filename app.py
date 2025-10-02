@@ -1,12 +1,12 @@
 import word as w
 import excel as x
 
-month = input("Podaj miesiąc, którego ma dotyczyć raport: ")
+time_period = input("Podaj okres czasu, którego ma dotyczyć raport: ")
 year = input("Podaj rok, którego ma dotyczyć raport: ")
-excel_name = input("Podaj nazwę pliku xlsx, z którego należy wygenerować raporty: ")
+excel_names = ["excel1", "excel2"]
 
 replacement_dict = {
-    '{month}': month,
+    '{time_period}': time_period,
     '{year}': year,
 }
 
@@ -41,8 +41,15 @@ stationary_fail_col = w.find_col_index("Usuwanie nieprawidłowości w funkcjonow
 table_mobile = word_mobile.tables[0] #przypisanie tabeli do zmiennej (mobilne)
 mobile_fail_col = w.find_col_index("Usuwanie nieprawidłowości w funkcjonowaniu urządzeń",table_mobile)
 
-excel = x.open_excel(excel_name)
-failures_dictionary = x.count_failures(excel) #utworzenie słownika z kluczem automat_id i wartościami failures, count
+#przetwarzanie wszystkich plików excel
+all_failures_list = [] #przechowuje słowniki wygenerowane dla kazdego pojedynczego pliku
+
+for excel_file in excel_names:
+    excel_data = x.open_excel(excel_file)
+    failures_dict = x.count_failures(excel_data) #utworzenie słownika z kluczem automat_id i wartościami failures, count
+    all_failures_list.append(failures_dict)
+
+failures_dictionary = x.merge_failure_dicts(all_failures_list)
 
 for automat_id, failures in failures_dictionary.items():
     if 'EN' in automat_id:
@@ -50,8 +57,8 @@ for automat_id, failures in failures_dictionary.items():
     else:
         w.insert_failures(automat_id,stationary_fail_col, failures_dictionary,table_stationary, failure_solution_dict)
 
-w.save_docx(f"Raport odnośnie urządzeń mobilnych umieszczonych w pociągach za {month} {year}.docx", word_mobile)
-w.save_docx(f"Raport odnośnie urządzeń umieszczonych w terenie za {month} {year}.docx", word_stationary)
+w.save_docx(f"Raport odnośnie urządzeń mobilnych umieszczonych w pociągach za {time_period} {year}.docx", word_mobile)
+w.save_docx(f"Raport odnośnie urządzeń umieszczonych w terenie za {time_period} {year}.docx", word_stationary)
 
 
 
